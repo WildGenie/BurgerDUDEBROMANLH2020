@@ -4,7 +4,6 @@ from config import RG_API_KEY
 # Basic Riot API Query
 
 def getJSON():
-    summoner_name = "thekillakela"
     url = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/"
 
     headers = {
@@ -15,7 +14,7 @@ def getJSON():
     "X-Riot-Token": RG_API_KEY
     }
 
-    response = requests.request("GET", url+summoner_name, headers=headers)
+    response = requests.request("GET", f"{url}thekillakela", headers=headers)
     print(response.json())
 
 getJSON()

@@ -59,10 +59,7 @@ class LCU:
         self.connected = False
 
         try:
-            if self.logged_in:
-                self.connected = True
-            else:
-                self.connected = False
+            self.connected = bool(self.logged_in)
         except:
             self.connected = False
 
@@ -113,8 +110,7 @@ class LCU:
         process, PID, port, password, protocol = self._parse_lockfile(self.install_directory)
         if port != self.port:
             raise RuntimeError('Port changed!')
-        auth_key = base64.b64encode(f'riot:{password}'.encode()).decode()
-        return auth_key
+        return base64.b64encode(f'riot:{password}'.encode()).decode()
 
     def _load_startup_data(self):
         """Sets self.install_directory, self.port and self.auth_key."""
@@ -219,11 +215,11 @@ class LCU:
 
     @property
     def logged_in(self):
-        if not self.connected:
-            return False
-        #try:
-        is_logged_in = self.get('/lol-platform-config/v1/initial-configuration-complete')
-        return is_logged_in
+        return (
+            self.get('/lol-platform-config/v1/initial-configuration-complete')
+            if self.connected
+            else False
+        )
         #except requests.exceptions.ConnectionError as error:
         #    print("Error in `logged_in`:", error)
         #    self.connected = False
@@ -267,7 +263,7 @@ class LCU:
                 #  changes in the directory contents.
                 if result == win32con.WAIT_OBJECT_0:
                     new_path_contents = dict([(f, None) for f in os.listdir(path_to_watch)])
-                    added = [f for f in new_path_contents if not f in old_path_contents]
+                    added = [f for f in new_path_contents if f not in old_path_contents]
                     #deleted = [f for f in old_path_contents if not f in new_path_contents]
                     if "lockfile" in added:
                         time.sleep(1)  # Wait another second for the lockfile to be written to
@@ -317,10 +313,13 @@ class LCU:
             print("Waiting for login...")
             while not self.logged_in:
                 # Every once in a while we should check to see if the client has closed before the user logged in
-                if retried > 0 and retried % (10 * check_interval) == 0:
-                    if wait_for_client_to_open:
-                        retried += self.wait_for_client_to_open(check_interval=check_interval, timeout=timeout)
-                        print("Waiting for login...")
+                if (
+                    retried > 0
+                    and retried % (10 * check_interval) == 0
+                    and wait_for_client_to_open
+                ):
+                    retried += self.wait_for_client_to_open(check_interval=check_interval, timeout=timeout)
+                    print("Waiting for login...")
                 time.sleep(check_interval)
                 retried += check_interval
                 if retried > timeout:
@@ -418,7 +417,7 @@ class LCU:
 
     def _mock_data_stream(self, filename):
         with open(filename) as f:
-            for line in f.readlines():
+            for line in f:
                 event = json.loads(line)
                 event = Event(uri=event['uri'], data=event['data'], created=event['timestamp'])
                 self._process_event(event)

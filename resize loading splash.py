@@ -7,7 +7,8 @@ id = 266
 champion = "Yasuo"
 num = 1
 
-image_url= "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/{}_{}.jpg".format(champion, num)
+image_url = f"http://ddragon.leagueoflegends.com/cdn/img/champion/loading/{champion}_{num}.jpg"
+
 filename = image_url.split("/")[-1]
 print(filename)
 
@@ -17,7 +18,7 @@ if r.status_code ==200:
     r.raw.decode_content = True
     with open(filename, 'wb') as f:
         shutil.copyfileobj(r.raw, f)
-    print('Image successfully downloaded: {}'.format(filename))
+    print(f'Image successfully downloaded: {filename}')
 else:
     print("Image could\n't be retrieved")
 

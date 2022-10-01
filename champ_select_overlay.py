@@ -9,19 +9,16 @@ def fullCSTest():
     # somewhere here relate champ id to champ name, in this case Nami
     champions = ["Shen", "Graves", "Syndra", "Samira", "Leona", "Ornn", "Hecarim", "Galio", "Ezreal", "Yuumi"]
     num = 0
-    cs_slot_num = 1
-
-
-    for champion in champions:
+    for cs_slot_num, champion in enumerate(champions, start=1):
         addChampPick(champion, 0, cs_slot_num)
-        cs_slot_num += 1
 
 def addChampPick(champion, skinID, slot):
-    print('attempting to update with ' + champion)
-    image_url = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/{}_{}.jpg".format(champion, 0)
+    print(f'attempting to update with {champion}')
+    image_url = f"http://ddragon.leagueoflegends.com/cdn/img/champion/loading/{champion}_0.jpg"
+
     print(image_url)
     # filename = image_url.split("/")[-1]
-    filename = "champ" + str(slot) + ".png"
+    filename = f"champ{str(slot)}.png"
     print(filename)
 
     r = requests.get(image_url, stream=True)
@@ -30,7 +27,7 @@ def addChampPick(champion, skinID, slot):
         r.raw.decode_content = True
         with open(filename, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
-        print('Image successfully downloaded: {}'.format(filename))
+        print(f'Image successfully downloaded: {filename}')
     else:
         print("Image could\n't be retrieved")
 
@@ -41,10 +38,11 @@ def addChampPick(champion, skinID, slot):
 
 def addChampBan(champion, slot):
     #print('attempting to update with ' + champion)
-    image_url = "http://ddragon.leagueoflegends.com/cdn/10.22.1/img/champion/{}.png".format(champion)
+    image_url = f"http://ddragon.leagueoflegends.com/cdn/10.22.1/img/champion/{champion}.png"
+
     #print(image_url)
     # filename = image_url.split("/")[-1]
-    filename = "ban" + str(slot) + ".png"
+    filename = f"ban{str(slot)}.png"
     #print(filename)
 
     r = requests.get(image_url, stream=True)
