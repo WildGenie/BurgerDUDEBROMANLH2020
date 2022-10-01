@@ -4,9 +4,12 @@ import shutil
 
 
 def addSummonerSpell(spell, slot):
-    image_url= "http://ddragon.leagueoflegends.com/cdn/10.22.1/img/spell/{}.png".format(spell)
+    image_url = (
+        f"http://ddragon.leagueoflegends.com/cdn/10.22.1/img/spell/{spell}.png"
+    )
+
     #filename = image_url.split("/")[-1]
-    filename = "spell" + str(slot) + ".png"
+    filename = f"spell{str(slot)}.png"
     #print(filename)
 
     r= requests.get(image_url, stream =True)

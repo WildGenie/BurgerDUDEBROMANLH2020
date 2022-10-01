@@ -9,10 +9,7 @@ class PrintSomeEventInfo(EventProcessor):
     # The "can_handle" method must return True and False.
     # Return True if this event handler can handle the event. Return False if not.
     def can_handle(self, event: Event):        
-        if issubclass(event.__class__, Event):
-            return True
-        else:
-            return False
+        return issubclass(event.__class__, Event)
 
     # The "handle" method defines the functionality of the handler.
     # This is where you write code to do something with the event.
